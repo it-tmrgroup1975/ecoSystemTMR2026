@@ -1,0 +1,10 @@
+# Ignore Executables
+*.exe
+tailwindcss
+
+# Django Specific
+__pycache__/
+*.pyc
+db.sqlite3
+.env
+media/
