@@ -1,262 +1,169 @@
 {% extends 'layout_backend.html' %}
 
 {% block page_title %}
-<div class="flex items-center gap-2 text-slate-500 text-sm">
+<div class="flex items-center gap-2 text-slate-500 text-xs md:text-sm">
     <a href="{% url 'product_list' %}" class="hover:text-erp-purple transition-colors">Products</a>
     <i class="bi bi-chevron-right text-[10px]"></i>
-    <span class="text-slate-800 font-bold">{% if object %}{{ object.name }}{% else %}New Product{% endif %}</span>
+    <span class="text-slate-800 font-bold truncate max-w-[150px] md:max-w-none">
+        {% if object %}{{ object.name }}{% else %}New Product{% endif %}
+    </span>
 </div>
 {% endblock %}
 
 {% block content %}
-<form method="post" enctype="multipart/form-data" class="max-w-[1400px] mx-auto animate-in fade-in duration-500">
+<form method="post" enctype="multipart/form-data" class="max-w-[1400px] mx-auto animate-in fade-in duration-500 pb-12">
     {% csrf_token %}
 
     {% if form.non_field_errors %}
-    <div class="mb-4 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-r-xl shadow-sm">
+    <div class="mb-4 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-r-xl shadow-sm mx-2 md:mx-0">
         {% for error in form.non_field_errors %}
         <p class="text-sm font-bold">{{ error }}</p>
         {% endfor %}
     </div>
     {% endif %}
 
-    <div class="flex flex-wrap items-center justify-between gap-4 mb-4 bg-white p-3 rounded-xl border border-slate-200 shadow-sm sticky top-0 z-10 backdrop-blur-md bg-white/90">
+    <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 mb-4 bg-white/90 backdrop-blur-md p-3 rounded-xl border border-slate-200 shadow-sm sticky top-0 z-[40]">
         <div class="flex items-center gap-2">
             <button type="submit"
-                    class="bg-erp-purple text-white px-6 py-1.5 rounded-lg font-bold hover:bg-erp-purple-light transition-all shadow-md active:scale-95">
+                    class="flex-1 md:flex-none bg-erp-purple text-white px-6 py-2 md:py-1.5 rounded-lg font-bold hover:bg-erp-purple-light transition-all shadow-md active:scale-95 text-sm md:text-base">
                 Save
             </button>
             <a href="{% url 'product_list' %}"
-               class="bg-white text-slate-700 px-6 py-1.5 rounded-lg font-bold border border-slate-300 hover:bg-slate-50 transition-all">
+               class="flex-1 md:flex-none text-center bg-white text-slate-700 px-6 py-2 md:py-1.5 rounded-lg font-bold border border-slate-300 hover:bg-slate-50 transition-all text-sm md:text-base">
                 Discard
             </a>
         </div>
 
-        <div class="flex items-center gap-px bg-slate-200 border border-slate-200 rounded-lg overflow-hidden">
-            <div class="bg-white px-4 py-1 text-center min-w-[100px] hover:bg-slate-50 cursor-pointer">
-                <p class="text-[10px] uppercase text-slate-400 font-bold">On Hand</p>
-                <p class="text-sm font-bold text-erp-purple">{{ object.stock_qty|default:"0" }} Units</p>
+        <div class="flex items-center gap-px bg-slate-200 border border-slate-200 rounded-lg overflow-hidden shrink-0">
+            <div class="flex-1 md:flex-none bg-white px-3 md:px-4 py-1 text-center min-w-[80px] md:min-w-[100px] hover:bg-slate-50 cursor-pointer">
+                <p class="text-[9px] md:text-[10px] uppercase text-slate-400 font-bold">On Hand</p>
+                <p class="text-xs md:text-sm font-bold text-erp-purple">{{ object.stock_qty|default:"0" }}</p>
             </div>
-            <div class="bg-white px-4 py-1 text-center min-w-[100px] hover:bg-slate-50 cursor-pointer border-l border-slate-100">
-                <p class="text-[10px] uppercase text-slate-400 font-bold">Forecasted</p>
-                <p class="text-sm font-bold text-blue-600">0.00 Units</p>
+            <div class="flex-1 md:flex-none bg-white px-3 md:px-4 py-1 text-center min-w-[80px] md:min-w-[100px] hover:bg-slate-50 cursor-pointer border-l border-slate-100">
+                <p class="text-[9px] md:text-[10px] uppercase text-slate-400 font-bold">Forecast</p>
+                <p class="text-xs md:text-sm font-bold text-blue-600">0.0</p>
             </div>
-            <div class="bg-white px-4 py-1 text-center min-w-[100px] hover:bg-slate-50 cursor-pointer border-l border-slate-100">
-                <i class="bi bi-graph-up text-slate-400"></i>
-                <p class="text-[10px] uppercase text-slate-400 font-bold">Sales</p>
+            <div class="hidden sm:block bg-white px-3 md:px-4 py-1 text-center min-w-[60px] md:min-w-[100px] hover:bg-slate-50 cursor-pointer border-l border-slate-100">
+                <i class="bi bi-graph-up text-slate-400 text-xs md:text-sm"></i>
+                <p class="text-[9px] md:text-[10px] uppercase text-slate-400 font-bold">Sales</p>
             </div>
         </div>
     </div>
 
-    <div class="bg-white rounded-sm border border-slate-200 shadow-xl min-h-[800px] p-8 md:p-12 relative">
+    <div class="bg-white rounded-lg md:rounded-sm border border-slate-200 shadow-xl min-h-[600px] p-6 md:p-12 relative overflow-hidden">
 
-        <div class="absolute top-12 right-12 text-center">
-            <div class="group relative w-32 h-32 bg-slate-50 border-2 border-dashed {% if form.image.errors %}border-red-400{% else %}border-slate-200{% endif %} rounded-lg flex items-center justify-center overflow-hidden hover:border-erp-purple transition-all shadow-inner">
+        <div class="flex flex-col items-center md:absolute md:top-12 md:right-12 mb-8 md:mb-0">
+            <div class="group relative w-32 h-32 md:w-40 md:h-40 bg-slate-50 border-2 border-dashed {% if form.image.errors %}border-red-400{% else %}border-slate-200{% endif %} rounded-2xl flex items-center justify-center overflow-hidden hover:border-erp-purple transition-all shadow-inner">
                 {% if object.image %}
                 <img src="{{ object.image.url }}" class="w-full h-full object-cover">
                 {% else %}
-                <i class="bi bi-camera text-4xl text-slate-300 group-hover:text-erp-purple"></i>
+                <div class="text-center">
+                    <i class="bi bi-camera text-4xl text-slate-300 group-hover:text-erp-purple transition-colors"></i>
+                </div>
                 {% endif %}
                 <input type="file" name="image" class="absolute inset-0 opacity-0 cursor-pointer">
             </div>
             <p class="text-[10px] mt-2 text-slate-400 font-bold uppercase tracking-tighter">Product Image</p>
-            {% if form.image.errors %}
-            <p class="text-[10px] text-red-500 font-bold mt-1">{{ form.image.errors.0 }}</p>
-            {% endif %}
         </div>
 
         <div class="mb-8 max-w-2xl">
-            <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Product Name</label>
+            <label class="block text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Product Name</label>
             <input type="text" name="name" value="{{ form.name.value|default:'' }}" required
-                   placeholder="e.g. กล่องซีล | 100 สีขาวใสฝาขาวใส"
-                   class="w-full text-4xl font-bold text-slate-800 border-b-2 {% if form.name.errors %}border-red-500{% else %}border-transparent{% endif %} hover:border-slate-100 focus:border-erp-purple outline-none transition-all py-2">
-            {% if form.name.errors %}
-            <p class="text-xs text-red-500 font-bold mt-2 flex items-center gap-1">
-                <i class="bi bi-exclamation-circle"></i> {{ form.name.errors.0 }}
-            </p>
-            {% endif %}
+                   placeholder="e.g. Product Name"
+                   class="w-full text-2xl md:text-4xl font-bold text-slate-800 border-b-2 {% if form.name.errors %}border-red-500{% else %}border-transparent{% endif %} hover:border-slate-100 focus:border-erp-purple outline-none transition-all py-2">
 
-            <div class="flex gap-6 mt-4">
+            <div class="flex flex-wrap gap-4 md:gap-6 mt-4">
                 <label class="flex items-center gap-2 cursor-pointer group">
                     <input type="checkbox" checked class="w-4 h-4 accent-erp-purple rounded">
-                    <span class="text-sm font-medium text-slate-600 group-hover:text-erp-purple transition-colors">Can be Sold</span>
+                    <span class="text-xs md:text-sm font-medium text-slate-600 group-hover:text-erp-purple transition-colors">Can be Sold</span>
                 </label>
                 <label class="flex items-center gap-2 cursor-pointer group">
                     <input type="checkbox" checked class="w-4 h-4 accent-erp-purple rounded">
-                    <span class="text-sm font-medium text-slate-600 group-hover:text-erp-purple transition-colors">Can be Purchased</span>
+                    <span class="text-xs md:text-sm font-medium text-slate-600 group-hover:text-erp-purple transition-colors">Can be Purchased</span>
                 </label>
             </div>
         </div>
 
-        <div class="border-b border-slate-200 mb-8">
-            <nav class="flex gap-8">
-                <button type="button"
-                        class="border-b-2 border-erp-purple px-1 py-4 text-sm font-bold text-erp-purple uppercase tracking-wider transition-all">
-                    General Information
+        <div class="border-b border-slate-200 mb-8 overflow-x-auto no-scrollbar">
+            <nav class="flex gap-6 md:gap-8 whitespace-nowrap">
+                <button type="button" class="tab-btn active border-b-2 border-erp-purple px-1 py-4 text-[11px] md:text-sm font-bold text-erp-purple uppercase tracking-wider">
+                    General Info
                 </button>
-                <button type="button"
-                        class="border-b-2 border-transparent px-1 py-4 text-sm font-bold text-slate-400 hover:text-slate-600 uppercase tracking-wider transition-all">
+                <button type="button" class="tab-btn border-b-2 border-transparent px-1 py-4 text-[11px] md:text-sm font-bold text-slate-400 hover:text-slate-600 uppercase tracking-wider">
                     Sales
                 </button>
-                <button type="button"
-                        class="border-b-2 border-transparent px-1 py-4 text-sm font-bold text-slate-400 hover:text-slate-600 uppercase tracking-wider transition-all">
+                <button type="button" class="tab-btn border-b-2 border-transparent px-1 py-4 text-[11px] md:text-sm font-bold text-slate-400 hover:text-slate-600 uppercase tracking-wider">
                     Inventory
                 </button>
-                <button type="button"
-                        class="border-b-2 border-transparent px-1 py-4 text-sm font-bold text-slate-400 hover:text-slate-600 uppercase tracking-wider transition-all">
+                <button type="button" class="tab-btn border-b-2 border-transparent px-1 py-4 text-[11px] md:text-sm font-bold text-slate-400 hover:text-slate-600 uppercase tracking-wider">
                     Accounting
                 </button>
             </nav>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-6">
-            <div class="space-y-4">
-                <div class="grid grid-cols-3 items-center">
-                    <label class="text-sm font-bold text-slate-500">Product Type</label>
-                    <div class="col-span-2">
-                        <select name="type" class="w-full bg-transparent border-b border-slate-200 py-1 focus:border-erp-purple outline-none text-sm transition-colors">
+            <div class="space-y-6 md:space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-3 items-start sm:items-center gap-1 sm:gap-4">
+                    <label class="text-xs md:text-sm font-bold text-slate-500 uppercase md:normal-case">Product Type</label>
+                    <div class="sm:col-span-2">
+                        <select name="type" class="w-full bg-transparent border-b border-slate-200 py-1 focus:border-erp-purple outline-none text-sm">
                             <option value="storable" {% if form.type.value == 'storable' %}selected{% endif %}>Storable Product</option>
                             <option value="consumable" {% if form.type.value == 'consumable' %}selected{% endif %}>Consumable</option>
                             <option value="service" {% if form.type.value == 'service' %}selected{% endif %}>Service</option>
                         </select>
                     </div>
                 </div>
-                <div class="grid grid-cols-3 items-center">
-                    <label class="text-sm font-bold text-slate-500">Unit of Measure</label>
-                    <div class="col-span-2">
-                        <input type="text" name="uom" placeholder="ใบ" value="{{ form.uom.value|default:'' }}"
+                <div class="grid grid-cols-1 sm:grid-cols-3 items-start sm:items-center gap-1 sm:gap-4">
+                    <label class="text-xs md:text-sm font-bold text-slate-500 uppercase md:normal-case">Unit of Measure</label>
+                    <div class="sm:col-span-2">
+                        <input type="text" name="uom" placeholder="Unit" value="{{ form.uom.value|default:'' }}"
                                class="w-full bg-transparent border-b border-slate-200 py-1 focus:border-erp-purple outline-none text-sm">
                     </div>
                 </div>
             </div>
 
-            <div class="space-y-4">
-                <div class="grid grid-cols-3 items-center">
-                    <label class="text-sm font-bold text-slate-500">Sales Price</label>
-                    <div class="col-span-2">
+            <div class="space-y-6 md:space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-3 items-start sm:items-center gap-1 sm:gap-4">
+                    <label class="text-xs md:text-sm font-bold text-slate-500 uppercase md:normal-case">Sales Price</label>
+                    <div class="sm:col-span-2">
                         <div class="flex items-center">
-                            <span class="mr-2 text-slate-400">฿</span>
-                            <input type="number" step="0.01" name="price"
-                                   value="{{ form.price.value|default:'1.00' }}"
-                                   class="w-full bg-transparent border-b {% if form.price.errors %}border-red-400 text-red-600{% else %}border-slate-200{% endif %} py-1 focus:border-erp-purple outline-none text-sm font-bold transition-colors">
+                            <span class="mr-2 text-slate-400 text-sm">฿</span>
+                            <input type="number" step="0.01" name="price" value="{{ form.price.value|default:'1.00' }}"
+                                   class="w-full bg-transparent border-b border-slate-200 py-1 focus:border-erp-purple outline-none text-sm font-bold">
                         </div>
-                        {% if form.price.errors %}
-                            <p class="text-[10px] text-red-500 font-bold mt-1">{{ form.price.errors.0 }}</p>
-                        {% endif %}
                     </div>
                 </div>
-
-                <div class="grid grid-cols-3 items-center">
-                    <label class="text-sm font-bold text-slate-500">Initial Stock</label>
-                    <div class="col-span-2">
-                        <input type="number" name="stock_qty" step="0.01"
-                               value="{{ form.stock_qty.value|default:'0.00' }}"
-                               class="w-full bg-transparent border-b border-slate-200 py-1 focus:border-erp-purple outline-none text-sm font-bold">
-                        {% if form.stock_qty.errors %}
-                        <p class="text-[10px] text-red-500 font-bold mt-1">{{ form.stock_qty.errors.0 }}</p>
-                        {% endif %}
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-3 items-center">
-                    <label class="text-sm font-bold text-slate-500">Internal Reference</label>
-                    <div class="col-span-2">
-                        <input type="text" name="code" value="{{ form.code.value|default:'' }}"
-                               placeholder="e.g. 3C23100010010100"
-                               class="w-full bg-transparent border-b {% if form.code.errors %}border-red-400 text-red-600{% else %}border-slate-200{% endif %} py-1 focus:border-erp-purple outline-none text-sm transition-colors">
-                        {% if form.code.errors %}
-                        <p class="text-[10px] text-red-500 font-bold mt-1">{{ form.code.errors.0 }}</p>
-                        {% endif %}
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-3 items-center">
-                    <label class="text-sm font-bold text-slate-500">Barcode</label>
-                    <div class="col-span-2">
-                        <input type="text"
-                               class="w-full bg-transparent border-b border-slate-200 py-1 focus:border-erp-purple outline-none text-sm transition-all">
+                <div class="grid grid-cols-1 sm:grid-cols-3 items-start sm:items-center gap-1 sm:gap-4">
+                    <label class="text-xs md:text-sm font-bold text-slate-500 uppercase md:normal-case">Internal Ref.</label>
+                    <div class="sm:col-span-2">
+                        <input type="text" name="code" value="{{ form.code.value|default:'' }}" placeholder="SKU-XXXX"
+                               class="w-full bg-transparent border-b border-slate-200 py-1 focus:border-erp-purple outline-none text-sm font-mono">
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="mt-16">
-            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100 pb-2 mb-4 flex items-center justify-between">
+        <div class="mt-12 md:mt-16">
+            <h4 class="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100 pb-2 mb-4">
                 Internal Notes
-                {% if form.description.errors %}
-                <span class="text-red-500 normal-case tracking-normal">{{ form.description.errors.0 }}</span>
-                {% endif %}
             </h4>
-
             <textarea name="description" placeholder="Write internal notes here..."
-                      class="w-full h-32 bg-slate-50/50 rounded-xl p-4 border {% if form.description.errors %}border-red-200{% else %}border-transparent{% endif %} focus:bg-white focus:border-erp-purple/30 outline-none text-sm transition-all">{{ form.description.value|default:'' }}</textarea>
+                      class="w-full h-32 bg-slate-50/50 rounded-xl p-4 border border-transparent focus:bg-white focus:border-erp-purple/30 outline-none text-sm transition-all">{{ form.description.value|default:'' }}</textarea>
         </div>
     </div>
 </form>
 
+<style>
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    /* Hide scrollbar for IE, Edge and Firefox */
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const form = document.querySelector('form');
-        const inputs = form.querySelectorAll('input[required], input[type="number"], input[name="code"]');
-
-        // 1. ฟังก์ชันแสดง/ซ่อน Error แบบ Real-time
-        const toggleError = (input, isValid, message) => {
-            let errorElement = input.parentElement.querySelector('.js-error-msg');
-
-            if (!isValid) {
-                input.classList.add('border-red-500');
-                input.classList.remove('border-transparent', 'border-slate-200');
-                if (!errorElement) {
-                    errorElement = document.createElement('p');
-                    errorElement.className = 'js-error-msg text-[10px] text-red-500 font-bold mt-1 animate-in fade-in slide-in-from-top-1';
-                    input.parentElement.appendChild(errorElement);
-                }
-                errorElement.textContent = message;
-            } else {
-                input.classList.remove('border-red-500');
-                input.classList.add('border-slate-200');
-                if (errorElement) errorElement.remove();
-            }
-        };
-
-        // 2. ตรวจสอบขณะพิมพ์ (Input Event)
-        inputs.forEach(input => {
-            input.addEventListener('input', function() {
-                if (this.name === 'price') {
-                    const val = parseFloat(this.value);
-                    toggleError(this, val >= 0.01, "ราคาสินค้าต้องเริ่มที่ 0.01 ฿");
-                }
-                else if (this.name === 'name') {
-                    toggleError(this, this.value.length >= 3, "ชื่อสินค้าสั้นเกินไป");
-                }
-                else if (this.name === 'code') {
-                    toggleError(this, /^[a-zA-Z0-9-]+$/.test(this.value), "รหัสต้องเป็น A-Z, 0-9 หรือ - เท่านั้น");
-                }
-            });
-        });
-
-        // 3. ป้องกันการ Submit หากข้อมูลไม่ถูกต้อง
-        form.addEventListener('submit', function(e) {
-            let hasError = false;
-
-            // เช็คราคาสินค้าซ้ำอีกครั้งก่อนส่ง
-            const priceInput = form.querySelector('input[name="price"]');
-            if (parseFloat(priceInput.value) < 0.01) {
-                toggleError(priceInput, false, "กรุณาระบุราคาที่ถูกต้องก่อนบันทึก");
-                hasError = true;
-            }
-
-            if (hasError) {
-                e.preventDefault();
-                // สั่นปุ่ม Save เพื่อเตือนผู้ใช้
-                const saveBtn = form.querySelector('button[type="submit"]');
-                saveBtn.classList.add('animate-bounce');
-                setTimeout(() => saveBtn.classList.remove('animate-bounce'), 1000);
-            }
-        });
-
-        // 4. ระบบ Tab Switching (ให้ Tab ทำงานได้จริง)
-        const tabButtons = document.querySelectorAll('nav button');
+        // Tab switching logic
+        const tabButtons = document.querySelectorAll('.tab-btn');
         tabButtons.forEach(button => {
             button.addEventListener('click', () => {
                 tabButtons.forEach(btn => {
@@ -269,5 +176,4 @@
         });
     });
 </script>
-
 {% endblock %}
