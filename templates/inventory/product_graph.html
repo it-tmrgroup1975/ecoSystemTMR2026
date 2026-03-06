@@ -1,0 +1,135 @@
+{% extends 'layout_backend.html' %}
+
+{% block content %}
+<div class="max-w-[1600px] mx-auto animate-in fade-in duration-500">
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-6 bg-white p-3 rounded-xl border border-slate-200 shadow-sm sticky top-0 z-10 backdrop-blur-md bg-white/90">
+        <div class="flex items-center gap-3">
+            <h2 class="text-xl font-bold text-slate-800">Inventory Analytics</h2>
+            <select id="chartTypeSelector" onchange="updateChartType(this.value)"
+                    class="bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-lg focus:ring-erp-purple focus:border-erp-purple block p-1.5 font-bold outline-none">
+                <option value="bar">📊 Bar Chart</option>
+                <option value="line">📈 Line Chart</option>
+                <option value="pie">🍕 Pie Chart</option>
+            </select>
+        </div>
+
+        <div class="flex gap-1 text-lg border-l border-slate-200 pl-4">
+            <a href="?view=list{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+               class="p-2 hover:bg-slate-100 rounded-lg text-slate-400 transition-all"><i class="bi bi-list-ul"></i></a>
+            <a href="?view=kanban{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+               class="p-2 hover:bg-slate-100 rounded-lg text-slate-400 transition-all"><i class="bi bi-grid-3x3-gap-fill"></i></a>
+            <a href="?view=graph" class="p-2 bg-erp-purple/10 rounded-lg text-erp-purple shadow-sm"><i class="bi bi-graph-up-arrow"></i></a>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 gap-6">
+        <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-xl min-h-[500px] flex flex-col">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h3 class="font-black text-slate-800 text-lg uppercase tracking-tight">Stock Value Analysis</h3>
+                    <p class="text-xs text-slate-400 font-bold">Total Valuation by Product Item</p>
+                </div>
+                <div class="text-right">
+                    <span class="text-2xl font-black text-erp-purple" id="totalValueDisplay">฿0.00</span>
+                    <p class="text-[10px] text-slate-400 uppercase font-black">Grand Total</p>
+                </div>
+            </div>
+
+            <div class="flex-1 relative">
+                <canvas id="inventoryChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    let myChart;
+    const ctx = document.getElementById('inventoryChart').getContext('2d');
+
+    // ข้อมูลจาก Django Context
+    const labels = [{% for p in products %}"{{ p.name }}",{% endfor %}];
+    const dataValues = [{% for p in products %}{{ p.price }} * {{ p.stock_qty }},{% endfor %}];
+
+    // คำนวณยอดรวม
+    const total = dataValues.reduce((a, b) => a + b, 0);
+    document.getElementById('totalValueDisplay').innerText = '฿' + total.toLocaleString(undefined, {minimumFractionDigits: 2});
+
+    // ชุดสีสำหรับ Pie Chart
+    const chartColors = [
+        '#6366f1', '#ec4899', '#8b5cf6', '#f59e0b', '#10b981',
+        '#3b82f6', '#f43f5e', '#06b6d4', '#84cc16', '#a855f7'
+    ];
+
+    function initChart(type = 'bar') {
+        // ลบกราฟเก่าก่อนสร้างใหม่ (สำคัญมาก)
+        if (myChart) {
+            myChart.destroy();
+        }
+
+        const config = {
+            type: type,
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Stock Value (฿)',
+                    data: dataValues,
+                    backgroundColor: type === 'pie' ? chartColors : 'rgba(99, 102, 241, 0.2)',
+                    borderColor: type === 'pie' ? '#fff' : '#6366f1',
+                    borderWidth: type === 'pie' ? 2 : 3,
+                    fill: type === 'line', // เติมสีใต้เส้นสำหรับ Line Chart
+                    tension: 0.4, // ความโค้งของเส้น
+                    pointBackgroundColor: '#6366f1',
+                    pointRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: type === 'pie',
+                        position: 'right',
+                        labels: { font: { weight: 'bold', family: 'Inter' } }
+                    },
+                    tooltip: {
+                        padding: 12,
+                        backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                        titleFont: { size: 14, weight: 'bold' },
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) label += ': ';
+                                if (context.parsed.y !== undefined) label += '฿' + context.parsed.y.toLocaleString();
+                                else label += '฿' + context.parsed.toLocaleString();
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: type === 'pie' ? {} : {
+                    y: {
+                        beginAtZero: true,
+                        grid: { borderDash: [5, 5], color: '#f1f5f9' },
+                        ticks: { font: { weight: 'bold' }, callback: value => '฿' + value.toLocaleString() }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { weight: 'bold' } }
+                    }
+                }
+            }
+        };
+
+        myChart = new Chart(ctx, config);
+    }
+
+    // ฟังก์ชันสลับกราฟ
+    function updateChartType(newType) {
+        initChart(newType);
+    }
+
+    // เริ่มต้นแสดงผลแบบ Bar
+    initChart('bar');
+</script>
+{% endblock %}

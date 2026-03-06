@@ -1,10 +1,43 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<aside id="main-sidebar"
+       class="fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
+    <div class="p-6">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-erp-purple rounded-lg flex items-center justify-center shadow-lg shadow-purple-500/20">
+                <i class="bi bi-cpu text-white text-lg"></i>
+            </div>
+            <span class="text-xl font-bold text-white tracking-tight">ECO<span
+                    class="text-slate-400 font-light">SYSTEM</span></span>
+        </div>
+    </div>
 
-</body>
-</html>
+    <nav class="px-4 space-y-1 overflow-y-auto h-[calc(100vh-160px)]">
+        <a href="{% url 'dashboard' %}"
+           class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl transition-all
+           {% if request.resolver_match.url_name == 'dashboard' %} text-white bg-white/10 {% else %} text-slate-400 hover:text-white hover:bg-white/5 {% endif %}">
+            <i class="bi bi-house-door mr-3 text-lg {% if request.resolver_match.url_name == 'dashboard' %} text-erp-purple-light {% else %} group-hover:text-erp-purple-light {% endif %}"></i>
+            Overview
+        </a>
+
+        <a href="{% url 'product_list' %}"
+           class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl transition-all
+           {% if 'product' in request.resolver_match.url_name %} text-white bg-white/10 {% else %} text-slate-400 hover:text-white hover:bg-white/5 {% endif %}">
+            <i class="bi bi-box-seam mr-3 text-lg {% if 'product' in request.resolver_match.url_name %} text-erp-purple-light {% else %} group-hover:text-erp-purple-light {% endif %}"></i>
+            Inventory
+        </a>
+    </nav>
+
+    <div class="absolute bottom-0 w-full p-4 bg-slate-900/50 backdrop-blur-md border-t border-white/5">
+        <div class="flex items-center gap-3 p-2 rounded-2xl bg-white/5 border border-white/10">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-erp-purple to-purple-400 flex items-center justify-center text-white font-bold shadow-inner">
+                {{ user.username|slice:":1"|upper }}
+            </div>
+            <div class="overflow-hidden">
+                <p class="text-sm font-semibold text-white truncate">{{ user.username }}</p>
+                <p class="text-[10px] text-slate-500 uppercase tracking-tighter">
+                    {% if user.is_superuser %} System Root {% else %} {{ user.company.name|default:"Member" }} {% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+</aside>
+<div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-40 hidden md:hidden" onclick="toggleMobileMenu()"></div>

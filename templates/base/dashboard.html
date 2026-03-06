@@ -1,0 +1,57 @@
+{% extends 'layout_backend.html' %}
+
+{% block page_title %}Enterprise Overview{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+    <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">System Statistics</h1>
+    <p class="text-slate-500">Real-time data from your PostgreSQL cluster.</p>
+</div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+    <div class="bg-white/60 backdrop-blur-md p-6 rounded-3xl border border-white shadow-erp hover:shadow-xl transition-all group">
+        <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 bg-erp-purple/10 rounded-2xl flex items-center justify-center group-hover:bg-erp-purple transition-colors duration-300">
+                <i class="bi bi-people-fill text-erp-purple group-hover:text-white text-xl"></i>
+            </div>
+            <div class="flex items-center text-green-500 text-xs font-bold bg-green-50 px-2 py-1 rounded-full">
+                <i class="bi bi-arrow-up-short mr-1"></i> Live
+            </div>
+        </div>
+        <p class="text-slate-500 text-sm font-semibold uppercase tracking-wider">Total Users</p>
+        <h3 class="text-3xl font-black text-slate-900 mt-1">{{ total_users }}</h3>
+    </div>
+
+    <div class="bg-white/60 backdrop-blur-md p-6 rounded-3xl border border-white shadow-erp hover:shadow-xl transition-all group">
+        <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center group-hover:bg-blue-600 transition-colors duration-300">
+                <i class="bi bi-building-fill text-blue-600 group-hover:text-white text-xl"></i>
+            </div>
+        </div>
+        <p class="text-slate-500 text-sm font-semibold uppercase tracking-wider">Registered Companies</p>
+        <h3 class="text-3xl font-black text-slate-900 mt-1">{{ total_companies }}</h3>
+    </div>
+
+    <div class="bg-white/60 backdrop-blur-md p-6 rounded-3xl border border-white shadow-erp hover:shadow-xl transition-all group">
+        <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center group-hover:bg-amber-500 transition-colors duration-300">
+                <i class="bi bi-database-fill-check text-amber-600 group-hover:text-white text-xl"></i>
+            </div>
+        </div>
+        <p class="text-slate-500 text-sm font-semibold uppercase tracking-wider">Storage Engine</p>
+        <h3 class="text-xl font-bold text-slate-900 mt-1">PostgreSQL 17</h3>
+    </div>
+
+    <div class="bg-white/60 backdrop-blur-md p-6 rounded-3xl border border-white shadow-erp hover:shadow-xl transition-all group">
+        <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center group-hover:bg-emerald-500 transition-colors duration-300">
+                <i class="bi bi-cpu-fill text-emerald-600 group-hover:text-white text-xl"></i>
+            </div>
+        </div>
+        <p class="text-slate-500 text-sm font-semibold uppercase tracking-wider">Backend Core</p>
+        <h3 class="text-xl font-bold text-slate-900 mt-1">Django 6.x</h3>
+    </div>
+
+</div>
+{% endblock %}

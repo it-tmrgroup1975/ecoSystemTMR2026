@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block body_content %}
+<div class="min-h-screen flex items-center justify-center bg-[radial-gradient(circle_at_top_right,_var(--color-erp-purple-light)_0%,_transparent_25%),_radial-gradient(circle_at_bottom_left,_#e2e8f0_0%,_transparent_25%)]">
+    <div class="max-w-md w-full m-4">
+        <div class="bg-white/80 backdrop-blur-xl p-10 rounded-3xl shadow-erp border border-white">
+            <div class="text-center mb-10">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-erp-purple rounded-2xl mb-4 shadow-lg shadow-erp-purple/30">
+                    <i class="bi bi-rocket-takeoff text-white text-3xl"></i>
+                </div>
+                <h2 class="text-3xl font-bold tracking-tight text-slate-900">Welcome Back</h2>
+                <p class="text-slate-500 mt-2">Access your enterprise ecosystem</p>
+            </div>
+
+            <form method="POST" class="space-y-5">
+                {% csrf_token %}
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2 ml-1">Username</label>
+                    <input name="username" type="text" required class="erp-input" placeholder="e.g. admin_tmr">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2 ml-1">Password</label>
+                    <input name="password" type="password" required class="erp-input" placeholder="••••••••">
+                </div>
+
+                {% if form.errors %}
+                <div class="bg-red-50 text-red-500 p-3 rounded-lg text-sm flex items-center animate-pulse">
+                    <i class="bi bi-exclamation-circle-fill mr-2"></i>
+                    Invalid credentials, please try again.
+                </div>
+                {% endif %}
+
+                <button type="submit" class="erp-btn-primary">
+                    Sign In
+                </button>
+            </form>
+
+            <div class="mt-8 pt-6 border-t border-slate-100 text-center">
+                <p class="text-xs text-slate-400 uppercase tracking-widest font-medium">Powered by TMR Ecosystem 2026</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

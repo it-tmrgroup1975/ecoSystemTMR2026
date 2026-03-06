@@ -1,10 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
-</body>
-</html>
+{% block body_content %}
+    <div class="hidden md:block">
+        {% include 'includes/_sidebar.html' %}
+    </div>
+
+    <div class="flex flex-col min-h-screen md:ml-64 transition-all duration-300">
+        <nav class="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md border-b border-slate-200 px-4 py-3">
+            <div class="flex items-center justify-between">
+                <button class="md:hidden text-slate-600 p-2 hover:bg-slate-100 rounded-lg" onclick="toggleMobileMenu()">
+                    <i class="bi bi-list text-2xl"></i>
+                </button>
+                <span class="font-bold text-slate-800 text-lg">{% block page_title %}{% endblock %}</span>
+
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-semibold px-2 py-1 bg-erp-purple/10 text-erp-purple rounded-md">
+                        {{ my_company.name|default:"General Corp" }}
+                    </span>
+                </div>
+            </div>
+        </nav>
+
+        <main class="flex-1 w-full p-4 md:p-8 overflow-x-hidden">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 hidden md:hidden" onclick="toggleMobileMenu()"></div>
+{% endblock %}

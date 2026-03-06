@@ -1,10 +1,21 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
+    <title>{% block title %}ERP System{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'vendor/bootstrap-icons/bootstrap-icons.css' %}">
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-gray-100">
+
+    <script src="{% static 'js/erp_main.js' %}"></script>
+    {% block body_content %}{% endblock %}
 </body>
 </html>

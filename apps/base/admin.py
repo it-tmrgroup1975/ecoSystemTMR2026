@@ -1,3 +1,5 @@
 from django.contrib import admin
 
-# Register your models here.
+admin.site.site_header = "TMR ECOSYSTEM ADMINISTRATION"
+admin.site.site_title = "TMR ERP Portal"
+admin.site.index_title = "Enterprise Resource Planning Management"
