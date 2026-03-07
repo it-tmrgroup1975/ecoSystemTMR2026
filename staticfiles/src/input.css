@@ -1,0 +1,32 @@
+@import "tailwindcss";
+@import "../vendor/bootstrap-icons/bootstrap-icons.css";
+
+@theme {
+  --color-erp-purple: #714B67;
+  --color-erp-purple-light: #8e5d81;
+  --color-erp-bg: #F8FAFC;
+  --font-inter: "Inter", ui-sans-serif, system-ui;
+
+  /* เพิ่ม Shadow แบบนุ่มนวลระดับพรีเมียม */
+  --shadow-erp: 0 10px 25px -5px rgba(0, 0, 0, 0.04), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+}
+
+@layer base {
+  body {
+    @apply bg-erp-bg text-slate-900 antialiased;
+    font-family: var(--font-inter);
+  }
+}
+
+@layer components {
+  .erp-input {
+    @apply w-full px-4 py-3 rounded-xl border border-slate-200 bg-white/50
+           focus:bg-white focus:ring-2 focus:ring-erp-purple/20 focus:border-erp-purple
+           transition-all duration-200 outline-none placeholder:text-slate-400;
+  }
+  .erp-btn-primary {
+    @apply w-full py-3 px-4 bg-erp-purple hover:bg-erp-purple-light text-white
+           font-semibold rounded-xl shadow-lg shadow-erp-purple/20
+           active:transform active:scale-[0.98] transition-all duration-200;
+  }
+}

@@ -6,11 +6,9 @@
             <div class="w-8 h-8 bg-erp-purple rounded-lg flex items-center justify-center shadow-lg shadow-purple-500/20">
                 <i class="bi bi-cpu text-white text-lg"></i>
             </div>
-            <span class="text-xl font-bold text-white tracking-tight">ECO<span
-                    class="text-slate-400 font-light">SYSTEM</span></span>
+            <span class="text-xl font-bold text-white tracking-tight">ECO<span class="text-slate-400 font-light">SYSTEM</span></span>
         </div>
-
-        <button class="md:hidden text-slate-400 hover:text-white p-1" onclick="toggleMobileMenu()">
+        <button class="md:hidden text-slate-400 hover:text-white" onclick="toggleMobileMenu()">
             <i class="bi bi-x-lg text-xl"></i>
         </button>
     </div>
@@ -29,24 +27,40 @@
             <i class="bi bi-box-seam mr-3 text-lg {% if 'product' in request.resolver_match.url_name %} text-erp-purple-light {% else %} group-hover:text-erp-purple-light {% endif %}"></i>
             Inventory
         </a>
-
-        </nav>
+    </nav>
 
     <div class="absolute bottom-0 w-full p-4 bg-slate-900/80 backdrop-blur-md border-t border-white/5">
-        <div class="flex items-center gap-3 p-2 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors cursor-pointer">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-erp-purple to-purple-400 flex items-center justify-center text-white font-bold shadow-inner shrink-0">
+
+        <div id="user-dropdown"
+             class="absolute bottom-20 left-4 right-4 bg-white rounded-2xl shadow-2xl border border-slate-200 py-2 hidden animate-in slide-in-from-bottom-2 duration-200 z-[60]">
+            <div class="px-4 py-2 border-b border-slate-100 mb-1">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Account Settings</p>
+            </div>
+            <a href="{% url 'profile' %}" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-erp-purple/5 hover:text-erp-purple transition-colors">
+                <i class="bi bi-person-circle text-lg opacity-70"></i>
+                <span class="font-semibold">My Profile</span>
+            </a>
+            <hr class="my-1 border-slate-100">
+            <form action="{% url 'logout' %}" method="post" class="block w-full">
+                {% csrf_token %}
+                <button type="submit" class="flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 w-full text-left transition-colors">
+                    <i class="bi bi-box-arrow-right text-lg opacity-70"></i>
+                    <span class="font-semibold">Logout</span>
+                </button>
+            </form>
+        </div>
+
+        <div onclick="toggleUserDropdown(event)" class="flex items-center gap-3 p-2 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all cursor-pointer group active:scale-95">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-erp-purple to-purple-400 flex items-center justify-center text-white font-bold shadow-inner shrink-0 group-hover:shadow-purple-500/40 transition-all">
                 {{ user.username|slice:":1"|upper }}
             </div>
-            <div class="overflow-hidden">
+            <div class="overflow-hidden flex-1">
                 <p class="text-sm font-semibold text-white truncate">{{ user.username }}</p>
                 <p class="text-[10px] text-slate-500 uppercase tracking-tighter truncate">
-                    {% if user.is_superuser %}
-                        <span class="text-erp-purple-light">System Root</span>
-                    {% else %}
-                        {{ user.company.name|default:"General Corp" }}
-                    {% endif %}
+                    {{ user.company.name|default:"General Corp" }}
                 </p>
             </div>
+            <i class="bi bi-chevron-up text-slate-500 text-xs group-hover:text-white transition-colors"></i>
         </div>
     </div>
 </aside>

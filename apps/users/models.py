@@ -11,6 +11,7 @@ class User(AbstractUser):
         null=True,
         related_name='employees'
     )
+    password_last_changed = models.DateTimeField(null=True, blank=True)
 
     # Add fields for ERP UI.
     is_internal_user = models.BooleanField(default=True)

@@ -14,8 +14,9 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body class="bg-gray-100">
+    {% block body_content %}{% endblock %}
 
     <script src="{% static 'js/erp_main.js' %}"></script>
-    {% block body_content %}{% endblock %}
+    {% block extra_js %}{% endblock %}
 </body>
 </html>
