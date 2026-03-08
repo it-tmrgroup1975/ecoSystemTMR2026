@@ -11,12 +11,12 @@ class User(AbstractUser):
         null=True,
         related_name='employees'
     )
-    password_last_changed = models.DateTimeField(null=True, blank=True)
 
     # Add fields for ERP UI.
     is_internal_user = models.BooleanField(default=True)
     phone = models.CharField(max_length=20, blank=True)
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
+    password_last_changed = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.username} ({self.company.name if self.company else 'No Company'})"

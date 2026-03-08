@@ -88,11 +88,14 @@
         if (input.files && input.files[0]) {
             var reader = new FileReader();
             reader.onload = function(e) {
-                const preview = document.getElementById('avatar-preview');
-                if (preview) {
-                    preview.src = e.target.result;
+                let preview = document.getElementById('avatar-preview');
+
+                // ถ้าหา id="avatar-preview" ไม่เจอ (กรณีไม่มีรูปเดิม)
+                if (!preview) {
+                    const container = document.querySelector('.w-32.h-32'); // หา container
+                    container.innerHTML = `<img src="${e.target.result}" id="avatar-preview" class="w-full h-full object-cover">`;
                 } else {
-                    location.reload(); // กรณีไม่มีรูปเดิม ให้โหลดใหม่เพื่อแสดงผล
+                    preview.src = e.target.result;
                 }
             }
             reader.readAsDataURL(input.files[0]);
