@@ -5,12 +5,12 @@ from pathlib import Path
 # 1. Build paths
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# 2. Add 'apps' folder to system path (Professional Way)
-# เพื่อให้เราเรียก 'users' ได้เลย แทนที่จะต้องเรียก 'apps.users' ในบางกรณี
+# 2. Add the 'apps' folder to the system path (Professional Way)
+# This allows us to directly access 'users' instead of having to access 'apps.users' in some cases.
 PROJECT_APPS_PATH = os.path.join(BASE_DIR, 'apps')
 sys.path.insert(0, PROJECT_APPS_PATH)
 
-# 3. Security (แนะนำให้ใช้ python-dotenv ในอนาคต)
+# 3. Security (We recommend using python-dotenv in the future)
 SECRET_KEY = 'django-insecure-#4231^6brm-8p%^2_f9*_m8!av2hh9=4$ok*_u@b0vzvy806ip'
 DEBUG = True
 ALLOWED_HOSTS = ['*']  # ปรับเป็น Domain จริงตอนขึ้น Production
@@ -45,19 +45,19 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'core.urls'
 
-# 6. Templates Configuration (จุดที่แก้ปัญหา 404 และ UI)
+# 6. Templates Configuration (Point for resolving 404 and UI issues)
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],  # ใช้ os.path.join เพื่อความชัวร์ในทุก OS
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
-                'django.template.context_processors.debug',  # เพิ่มเพื่อใช้เช็ค DEBUG ใน Template
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'django.template.context_processors.static',  # เพิ่มเพื่อให้เรียก static ได้แม่นยำ
+                'django.template.context_processors.static',
             ],
         },
     },
@@ -65,7 +65,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
-# 7. Database (PostgreSQL - Enterprise Standard)
+# 7. Database (Postgres SQL - Enterprise Standard)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -96,14 +96,14 @@ LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'login'
 
-# 11. Static & Media Files (หัวใจของ UI/UX ระดับจักรวาล)
+# 11. Static & Media Files
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# เพิ่มการจัดการไฟล์ Media (สำหรับ Logo บริษัท/รูปโปรไฟล์)
+# Added media file management (for company logos/profile pictures)
 MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
