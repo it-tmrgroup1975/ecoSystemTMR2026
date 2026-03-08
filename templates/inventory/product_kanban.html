@@ -40,12 +40,22 @@
                 </div>
             </div>
 
-            <div class="flex-1 max-w-2xl relative">
-                <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none text-slate-400"><i
-                        class="bi bi-search"></i></div>
-                <input type="text" name="search" value="{{ request.GET.search }}" placeholder="Search products..."
-                       class="w-full pl-10 pr-12 py-1.5 bg-slate-50 border border-slate-200 rounded-md focus:bg-white outline-none text-sm"
+            <div class="flex-1 max-w-2xl relative group/search">
+                <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none text-slate-400">
+                    <i class="bi bi-search"></i>
+                </div>
+
+                <input type="text" name="search" id="product-search" value="{{ request.GET.search }}"
+                       placeholder="Search products by Name or Code..."
+                       class="w-full pl-10 pr-12 py-1.5 bg-slate-50 border border-slate-200 rounded-md focus:bg-white focus:ring-2 focus:ring-erp-purple/20 focus:border-erp-purple transition-all outline-none text-sm"
                        onkeypress="if(event.keyCode==13){ event.preventDefault(); this.form.method='get'; this.form.submit(); }">
+
+                {% if request.GET.search %}
+                <button type="button" onclick="clearSearch(this)"
+                        class="absolute inset-y-0 right-3 flex items-center text-slate-400 hover:text-red-500 transition-colors">
+                    <i class="bi bi-x-circle-fill"></i>
+                </button>
+                {% endif %}
             </div>
 
             <div class="flex items-center gap-4 text-sm text-slate-500">
@@ -125,6 +135,22 @@
         input.type = 'hidden'; input.name = 'action'; input.value = 'delete';
         mainForm.appendChild(input);
         mainForm.submit();
+    }
+
+
+    /**
+     * ล้างค่าในช่องค้นหาและส่งฟอร์มใหม่เพื่อแสดงรายการทั้งหมด
+     * @param {HTMLElement} btn - ปุ่มที่ถูกคลิก
+     */
+    function clearSearch(btn) {
+        // ค้นหา Input ที่อยู่ใน Group เดียวกัน
+        const input = btn.parentElement.querySelector('input[name="search"]');
+        if (input) {
+            input.value = ''; // ล้างค่า
+            const form = input.form;
+            form.method = 'get'; // เปลี่ยนเป็น GET เพื่อล้างผลการค้นหา
+            form.submit(); // ส่งฟอร์ม
+        }
     }
 </script>
 {% endblock %}

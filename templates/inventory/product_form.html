@@ -88,58 +88,145 @@
 
         <div class="border-b border-slate-200 mb-8 overflow-x-auto no-scrollbar">
             <nav class="flex gap-6 md:gap-8 whitespace-nowrap">
-                <button type="button" class="tab-btn active border-b-2 border-erp-purple px-1 py-4 text-[11px] md:text-sm font-bold text-erp-purple uppercase tracking-wider">
+                <button type="button" data-tab="general" class="tab-btn active border-b-2 border-erp-purple px-1 py-4 text-[11px] md:text-sm font-bold text-erp-purple uppercase tracking-wider">
                     General Info
                 </button>
-                <button type="button" class="tab-btn border-b-2 border-transparent px-1 py-4 text-[11px] md:text-sm font-bold text-slate-400 hover:text-slate-600 uppercase tracking-wider">
+                <button type="button" data-tab="sales" class="tab-btn border-b-2 border-transparent px-1 py-4 text-[11px] md:text-sm font-bold text-slate-400 hover:text-slate-600 uppercase tracking-wider">
                     Sales
                 </button>
-                <button type="button" class="tab-btn border-b-2 border-transparent px-1 py-4 text-[11px] md:text-sm font-bold text-slate-400 hover:text-slate-600 uppercase tracking-wider">
+                <button type="button" data-tab="inventory" class="tab-btn border-b-2 border-transparent px-1 py-4 text-[11px] md:text-sm font-bold text-slate-400 hover:text-slate-600 uppercase tracking-wider">
                     Inventory
                 </button>
-                <button type="button" class="tab-btn border-b-2 border-transparent px-1 py-4 text-[11px] md:text-sm font-bold text-slate-400 hover:text-slate-600 uppercase tracking-wider">
+                <button type="button" data-tab="accounting" class="tab-btn border-b-2 border-transparent px-1 py-4 text-[11px] md:text-sm font-bold text-slate-400 hover:text-slate-600 uppercase tracking-wider">
                     Accounting
                 </button>
             </nav>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-6">
-            <div class="space-y-6 md:space-y-4">
-                <div class="grid grid-cols-1 sm:grid-cols-3 items-start sm:items-center gap-1 sm:gap-4">
-                    <label class="text-xs md:text-sm font-bold text-slate-500 uppercase md:normal-case">Product Type</label>
-                    <div class="sm:col-span-2">
-                        <select name="type" class="w-full bg-transparent border-b border-slate-200 py-1 focus:border-erp-purple outline-none text-sm">
-                            <option value="storable" {% if form.type.value == 'storable' %}selected{% endif %}>Storable Product</option>
-                            <option value="consumable" {% if form.type.value == 'consumable' %}selected{% endif %}>Consumable</option>
-                            <option value="service" {% if form.type.value == 'service' %}selected{% endif %}>Service</option>
-                        </select>
+        <div id="tab-container">
+            <div id="general" class="tab-content block">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-6">
+                    <div class="space-y-6 md:space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 items-start sm:items-center gap-1 sm:gap-4">
+                            <label class="text-xs md:text-sm font-bold text-slate-500 uppercase md:normal-case">Product Type</label>
+                            <div class="sm:col-span-2">
+                                <select name="type" class="w-full bg-transparent border-b border-slate-200 py-1 focus:border-erp-purple outline-none text-sm">
+                                    <option value="storable" {% if form.type.value == 'storable' %}selected{% endif %}>Storable Product</option>
+                                    <option value="consumable" {% if form.type.value == 'consumable' %}selected{% endif %}>Consumable</option>
+                                    <option value="service" {% if form.type.value == 'service' %}selected{% endif %}>Service</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 items-start sm:items-center gap-1 sm:gap-4">
+                            <label class="text-xs md:text-sm font-bold text-slate-500 uppercase md:normal-case">Unit of Measure</label>
+                            <div class="sm:col-span-2">
+                                <input type="text" name="uom" placeholder="Unit" value="{{ form.uom.value|default:'' }}"
+                                       class="w-full bg-transparent border-b border-slate-200 py-1 focus:border-erp-purple outline-none text-sm">
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-3 items-start sm:items-center gap-1 sm:gap-4">
-                    <label class="text-xs md:text-sm font-bold text-slate-500 uppercase md:normal-case">Unit of Measure</label>
-                    <div class="sm:col-span-2">
-                        <input type="text" name="uom" placeholder="Unit" value="{{ form.uom.value|default:'' }}"
-                               class="w-full bg-transparent border-b border-slate-200 py-1 focus:border-erp-purple outline-none text-sm">
+
+                    <div class="space-y-6 md:space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 items-start sm:items-center gap-1 sm:gap-4">
+                            <label class="text-xs md:text-sm font-bold text-slate-500 uppercase md:normal-case">Sales Price</label>
+                            <div class="sm:col-span-2">
+                                <div class="flex items-center">
+                                    <span class="mr-2 text-slate-400 text-sm">฿</span>
+                                    <input type="number" step="0.01" name="price" value="{{ form.price.value|default:'1.00' }}"
+                                           class="w-full bg-transparent border-b border-slate-200 py-1 focus:border-erp-purple outline-none text-sm font-bold">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 items-start sm:items-center gap-1 sm:gap-4">
+                            <label class="text-xs md:text-sm font-bold text-slate-500 uppercase md:normal-case">Quantity</label>
+                            <div class="sm:col-span-2">
+                                <div class="flex items-center">
+                                    <span class="mr-2 text-slate-400 text-sm">฿</span>
+                                    <input type="number" step="0.01" name="stock_qty" value="{{ form.stock_qty.value|default:'1.00' }}"
+                                           class="w-full bg-transparent border-b border-slate-200 py-1 focus:border-erp-purple outline-none text-sm font-bold">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 items-start sm:items-center gap-1 sm:gap-4">
+                            <label class="text-xs md:text-sm font-bold text-slate-500 uppercase md:normal-case">Internal Ref.</label>
+                            <div class="sm:col-span-2">
+                                <input type="text" name="code" value="{{ form.code.value|default:'' }}" placeholder="SKU-XXXX"
+                                       class="w-full bg-transparent border-b border-slate-200 py-1 focus:border-erp-purple outline-none text-sm font-mono">
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="space-y-6 md:space-y-4">
-                <div class="grid grid-cols-1 sm:grid-cols-3 items-start sm:items-center gap-1 sm:gap-4">
-                    <label class="text-xs md:text-sm font-bold text-slate-500 uppercase md:normal-case">Sales Price</label>
-                    <div class="sm:col-span-2">
-                        <div class="flex items-center">
-                            <span class="mr-2 text-slate-400 text-sm">฿</span>
-                            <input type="number" step="0.01" name="price" value="{{ form.price.value|default:'1.00' }}"
-                                   class="w-full bg-transparent border-b border-slate-200 py-1 focus:border-erp-purple outline-none text-sm font-bold">
+            <div id="sales" class="tab-content hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-6">
+                    <div class="space-y-4">
+                        <h4 class="text-xs font-bold text-slate-800 border-b pb-2 mb-4">Upsell & Cross-sell</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 items-center gap-4">
+                            <label class="text-xs font-bold text-slate-500">Optional Products</label>
+                            <div class="sm:col-span-2">
+                                <input type="text" placeholder="Add optional products..." class="w-full bg-transparent border-b border-slate-200 py-1 focus:border-erp-purple outline-none text-sm">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <h4 class="text-xs font-bold text-slate-800 border-b pb-2 mb-4">Point of Sale</h4>
+                        <label class="flex items-center gap-2 cursor-pointer group">
+                            <input type="checkbox" class="w-4 h-4 accent-erp-purple rounded">
+                            <span class="text-sm font-medium text-slate-600">Available in POS</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div id="inventory" class="tab-content hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-6">
+                    <div class="space-y-4">
+                        <h4 class="text-xs font-bold text-slate-800 border-b pb-2 mb-4">Operations</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 items-start gap-4">
+                            <label class="text-xs font-bold text-slate-500">Routes</label>
+                            <div class="sm:col-span-2 flex flex-col gap-2">
+                                <label class="flex items-center gap-2 text-sm text-slate-600"><input type="checkbox" class="accent-erp-purple"> Buy</label>
+                                <label class="flex items-center gap-2 text-sm text-slate-600"><input type="checkbox" class="accent-erp-purple"> Manufacture</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <h4 class="text-xs font-bold text-slate-800 border-b pb-2 mb-4">Logistics</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 items-center gap-4">
+                            <label class="text-xs font-bold text-slate-500">Weight</label>
+                            <div class="sm:col-span-2 flex items-center gap-2">
+                                <input type="number" step="0.01" class="w-full bg-transparent border-b border-slate-200 py-1 focus:border-erp-purple outline-none text-sm">
+                                <span class="text-xs text-slate-400">kg</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-3 items-start sm:items-center gap-1 sm:gap-4">
-                    <label class="text-xs md:text-sm font-bold text-slate-500 uppercase md:normal-case">Internal Ref.</label>
-                    <div class="sm:col-span-2">
-                        <input type="text" name="code" value="{{ form.code.value|default:'' }}" placeholder="SKU-XXXX"
-                               class="w-full bg-transparent border-b border-slate-200 py-1 focus:border-erp-purple outline-none text-sm font-mono">
+            </div>
+
+            <div id="accounting" class="tab-content hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-6">
+                    <div class="space-y-4">
+                        <h4 class="text-xs font-bold text-slate-800 border-b pb-2 mb-4">Receivables</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 items-center gap-4">
+                            <label class="text-xs font-bold text-slate-500">Income Account</label>
+                            <div class="sm:col-span-2">
+                                <select class="w-full bg-transparent border-b border-slate-200 py-1 focus:border-erp-purple outline-none text-sm">
+                                    <option>411100 Sales of Goods</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <h4 class="text-xs font-bold text-slate-800 border-b pb-2 mb-4">Payables</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 items-center gap-4">
+                            <label class="text-xs font-bold text-slate-500">Expense Account</label>
+                            <div class="sm:col-span-2">
+                                <select class="w-full bg-transparent border-b border-slate-200 py-1 focus:border-erp-purple outline-none text-sm">
+                                    <option>511100 Cost of Goods Sold</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -164,16 +251,32 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // 1. Tab switching logic (คงเดิมไว้)
+        // 1. Tab switching logic (แก้ไขเพื่อสลับเนื้อหา)
         const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
         tabButtons.forEach(button => {
             button.addEventListener('click', () => {
+                const targetId = button.getAttribute('data-tab');
+
+                // Update Button State
                 tabButtons.forEach(btn => {
                     btn.classList.remove('border-erp-purple', 'text-erp-purple');
                     btn.classList.add('border-transparent', 'text-slate-400');
                 });
                 button.classList.remove('border-transparent', 'text-slate-400');
                 button.classList.add('border-erp-purple', 'text-erp-purple');
+
+                // Update Content Visibility
+                tabContents.forEach(content => {
+                    if (content.id === targetId) {
+                        content.classList.remove('hidden');
+                        content.classList.add('block', 'animate-in', 'fade-in', 'duration-300');
+                    } else {
+                        content.classList.remove('block');
+                        content.classList.add('hidden');
+                    }
+                });
             });
         });
 
@@ -184,23 +287,16 @@
                 if (this.files && this.files[0]) {
                     const reader = new FileReader();
                     reader.onload = function(e) {
-                        // ค้นหา Container โดยใช้ class group และ relative
                         const container = imageInput.closest('.group.relative');
                         let preview = container.querySelector('img');
                         let iconPlaceHolder = container.querySelector('.text-center');
 
                         if (!preview) {
-                            // สร้างแท็ก img ใหม่
                             preview = document.createElement('img');
                             preview.className = "w-full h-full object-cover animate-in fade-in duration-300";
-                            // นำไปใส่ไว้ก่อนหน้า input เพื่อไม่ให้ทับตำแหน่งกัน
                             container.insertBefore(preview, imageInput);
-
-                            // ลบไอคอนกล้องเดิมออก (ถ้ามี)
                             if (iconPlaceHolder) iconPlaceHolder.remove();
                         }
-
-                        // อัปเดต Source ของรูป
                         preview.src = e.target.result;
                     }
                     reader.readAsDataURL(this.files[0]);
