@@ -2,7 +2,7 @@
 
 {% block page_title %}
 <div class="flex items-center gap-2 text-slate-500 text-xs md:text-sm">
-    <a href="{% url 'product_list' %}" class="hover:text-erp-purple transition-colors">Products</a>
+    <a href="{% url 'product_list' %}?view={{ request.GET.view|default:'list' }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" class="hover:text-erp-purple transition-colors">Products</a>
     <i class="bi bi-chevron-right text-[10px]"></i>
     <span class="text-slate-800 font-bold truncate max-w-[150px] md:max-w-none">
         {% if object %}{{ object.name }}{% else %}New Product{% endif %}
@@ -11,7 +11,9 @@
 {% endblock %}
 
 {% block content %}
-<form method="post" enctype="multipart/form-data" class="max-w-[1400px] mx-auto animate-in fade-in duration-500 pb-12">
+<form method="post" enctype="multipart/form-data"
+      action="?view={{ request.GET.view|default:'list' }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+      class="max-w-[1400px] mx-auto animate-in fade-in duration-500 pb-12">
     {% csrf_token %}
 
     {% if form.non_field_errors %}
@@ -28,7 +30,7 @@
                     class="flex-1 md:flex-none bg-erp-purple text-white px-6 py-2 md:py-1.5 rounded-lg font-bold hover:bg-erp-purple-light transition-all shadow-md active:scale-95 text-sm md:text-base">
                 Save
             </button>
-            <a href="{% url 'product_list' %}"
+            <a href="{% url 'product_list' %}?view={{ request.GET.view|default:'list' }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
                class="flex-1 md:flex-none text-center bg-white text-slate-700 px-6 py-2 md:py-1.5 rounded-lg font-bold border border-slate-300 hover:bg-slate-50 transition-all text-sm md:text-base">
                 Discard
             </a>
@@ -162,7 +164,7 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Tab switching logic
+        // 1. Tab switching logic (คงเดิมไว้)
         const tabButtons = document.querySelectorAll('.tab-btn');
         tabButtons.forEach(button => {
             button.addEventListener('click', () => {
@@ -174,6 +176,37 @@
                 button.classList.add('border-erp-purple', 'text-erp-purple');
             });
         });
+
+        // 2. Image Preview Logic (แก้ไขเพื่อไม่ให้ลบ Input ทิ้ง)
+        const imageInput = document.querySelector('input[name="image"]');
+        if (imageInput) {
+            imageInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        // ค้นหา Container โดยใช้ class group และ relative
+                        const container = imageInput.closest('.group.relative');
+                        let preview = container.querySelector('img');
+                        let iconPlaceHolder = container.querySelector('.text-center');
+
+                        if (!preview) {
+                            // สร้างแท็ก img ใหม่
+                            preview = document.createElement('img');
+                            preview.className = "w-full h-full object-cover animate-in fade-in duration-300";
+                            // นำไปใส่ไว้ก่อนหน้า input เพื่อไม่ให้ทับตำแหน่งกัน
+                            container.insertBefore(preview, imageInput);
+
+                            // ลบไอคอนกล้องเดิมออก (ถ้ามี)
+                            if (iconPlaceHolder) iconPlaceHolder.remove();
+                        }
+
+                        // อัปเดต Source ของรูป
+                        preview.src = e.target.result;
+                    }
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+        }
     });
 </script>
 {% endblock %}

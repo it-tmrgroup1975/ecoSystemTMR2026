@@ -13,7 +13,7 @@
             </select>
         </div>
 
-        <div class="flex gap-1 text-lg border-l border-slate-200 pl-4">
+        <div class="flex gap-1 text-lg pl-4">
             <a href="?view=list{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
                class="p-2 hover:bg-slate-100 rounded-lg text-slate-400 transition-all"><i class="bi bi-list-ul"></i></a>
             <a href="?view=kanban{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"

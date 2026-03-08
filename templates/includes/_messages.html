@@ -1,0 +1,44 @@
+{% if messages %}
+<div id="messages-container" class="fixed top-5 right-5 z-[100] space-y-3 pointer-events-none">
+    {% for message in messages %}
+    <div class="message-item pointer-events-auto flex items-center p-4 min-w-[300px] rounded-2xl shadow-2xl border transition-all duration-500 transform translate-x-full opacity-0
+        {% if message.tags == 'success' %} bg-emerald-50 border-emerald-200 text-emerald-800 {% else %} bg-red-50 border-red-200 text-red-800 {% endif %}">
+
+        <div class="flex-shrink-0 mr-3">
+            {% if message.tags == 'success' %}
+                <i class="bi bi-check-circle-fill text-xl text-emerald-500"></i>
+            {% else %}
+                <i class="bi bi-exclamation-circle-fill text-xl text-red-500"></i>
+            {% endif %}
+        </div>
+
+        <div class="flex-1 mr-8">
+            <p class="text-sm font-bold">{{ message }}</p>
+        </div>
+
+        <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-slate-600 transition-colors">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const messages = document.querySelectorAll('.message-item');
+        messages.forEach((msg, index) => {
+            // แสดงผลแบบเลื่อนเข้าทีละตัว
+            setTimeout(() => {
+                msg.classList.remove('translate-x-full', 'opacity-0');
+                msg.classList.add('translate-x-0', 'opacity-100');
+            }, 100 * index);
+
+            // ปิดอัตโนมัติหลังจาก 5 วินาที
+            setTimeout(() => {
+                msg.classList.add('translate-x-full', 'opacity-0');
+                setTimeout(() => msg.remove(), 500);
+            }, 5000);
+        });
+    });
+</script>
+{% endif %}

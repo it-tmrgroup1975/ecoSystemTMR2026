@@ -7,6 +7,8 @@ from django.contrib.auth.views import PasswordChangeView
 from .models import User
 from .forms import UserProfileForm
 from django.utils import timezone
+from django.contrib import messages # import messages
+from django.contrib.messages.views import SuccessMessageMixin # For Class-based views
 
 
 class ERPLoginView(LoginView):
@@ -17,11 +19,12 @@ class ERPLoginView(LoginView):
         return reverse_lazy('dashboard')  # เดี๋ยวเราจะไปสร้าง URL นี้กัน
 
 
-class ProfileUpdateView(LoginRequiredMixin, UpdateView):
+class ProfileUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = User
     form_class = UserProfileForm
     template_name = 'users/profile.html'
     success_url = reverse_lazy('profile')
+    success_message = "บันทึกข้อมูลโปรไฟล์ของคุณเรียบร้อยแล้ว!"
 
     def get_object(self):
         return self.request.user

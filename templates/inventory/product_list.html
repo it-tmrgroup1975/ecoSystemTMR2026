@@ -10,10 +10,11 @@
 <div class="max-w-[1600px] mx-auto">
     <form id="product-list-form" method="post">
         {% csrf_token %}
+        <input type="hidden" name="view" value="{{ request.GET.view|default:'list' }}">
 
         <div class="flex flex-wrap items-center justify-between gap-4 mb-4 bg-white p-2 rounded-lg border border-slate-200 shadow-sm">
             <div class="flex items-center gap-2">
-                <a href="{% url 'product_create' %}"
+                <a href="{% url 'product_create' %}?view=list"
                    class="bg-erp-purple text-white px-4 py-1.5 rounded-md font-bold hover:bg-erp-purple-light transition-all shadow-sm">
                     New
                 </a>
@@ -29,8 +30,7 @@
                                     class="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-erp-purple transition-colors flex items-center">
                                 <i class="bi bi-files mr-3 text-slate-400"></i> Duplicate Selected
                             </button>
-                            <button type="button" name="action" value="delete"
-                                    onclick="openDeleteModal()"
+                            <button type="button" onclick="openDeleteModal()"
                                     class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors flex items-center border-t border-slate-100">
                                 <i class="bi bi-trash3 mr-3"></i> Delete Selected
                             </button>
@@ -46,7 +46,7 @@
                 <input type="text" name="search" value="{{ request.GET.search }}"
                        placeholder="Search products by Name or Code..."
                        class="w-full pl-10 pr-12 py-1.5 bg-slate-50 border border-slate-200 rounded-md focus:bg-white focus:ring-2 focus:ring-erp-purple/20 focus:border-erp-purple transition-all outline-none text-sm"
-                       onkeypress="if(event.keyCode==13){ this.form.method='get'; this.form.submit(); }">
+                       onkeypress="if(event.keyCode==13){ event.preventDefault(); this.form.method='get'; this.form.submit(); }">
             </div>
 
             <div class="flex items-center gap-4 text-sm text-slate-500">
@@ -61,7 +61,7 @@
 
                     <div class="flex items-center bg-slate-100 rounded-lg p-0.5 border border-slate-200">
                         {% if page_obj.has_previous %}
-                            <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+                            <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.view %}&view={{ request.GET.view }}{% endif %}"
                                class="p-1.5 hover:bg-white hover:shadow-sm rounded-md transition-all text-slate-600">
                                 <i class="bi bi-chevron-left text-sm"></i>
                             </a>
@@ -72,7 +72,7 @@
                         {% endif %}
 
                         {% if page_obj.has_next %}
-                            <a href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+                            <a href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.view %}&view={{ request.GET.view }}{% endif %}"
                                class="p-1.5 hover:bg-white hover:shadow-sm rounded-md transition-all text-slate-600 border-l border-slate-200">
                                 <i class="bi bi-chevron-right text-sm"></i>
                             </a>
@@ -82,13 +82,10 @@
                             </span>
                         {% endif %}
                     </div>
-
-                    <div class="flex border border-slate-200 rounded-lg overflow-hidden bg-white">
-                        </div>
                 </div>
                 <div class="flex gap-1 text-lg">
                     <a href="?view=list{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
-                       class="p-1 rounded transition-all {% if 'kanban' not in request.GET.view and 'graph' not in request.GET.view %} text-erp-purple bg-erp-purple/10 {% else %} hover:bg-slate-100 {% endif %}">
+                       class="p-1 rounded transition-all {% if 'kanban' not in request.GET.view %} text-erp-purple bg-erp-purple/10 {% else %} hover:bg-slate-100 {% endif %}">
                         <i class="bi bi-list-ul"></i>
                     </a>
                     <a href="?view=kanban{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
@@ -107,57 +104,34 @@
             <table class="w-full text-left border-collapse">
                 <thead>
                 <tr class="bg-slate-50 border-b border-slate-200 text-[11px] uppercase tracking-wider text-slate-500 font-black">
-                    <th class="px-4 py-2 w-10 text-center"><input type="checkbox" id="select-all"
-                                                                  class="accent-erp-purple cursor-pointer"></th>
+                    <th class="px-4 py-2 w-10 text-center"><input type="checkbox" id="select-all" class="accent-erp-purple cursor-pointer"></th>
                     <th class="px-4 py-2 w-12 text-center">Image</th>
                     <th class="px-4 py-2 min-w-[300px]">Product Name</th>
                     <th class="px-4 py-2">Internal Reference</th>
                     <th class="px-4 py-2 text-right">Sales Price</th>
                     <th class="px-4 py-2 text-right">On Hand</th>
-                    <th class="px-4 py-2">Unit</th>
                 </tr>
                 </thead>
                 <tbody class="text-sm divide-y divide-slate-100">
                 {% for product in products %}
                 <tr class="hover:bg-slate-50/80 transition-colors group">
                     <td class="px-4 py-2 text-center">
-                        <input type="checkbox" name="selected_ids" value="{{ product.id }}"
-                               class="product-checkbox accent-erp-purple cursor-pointer">
+                        <input type="checkbox" name="selected_ids" value="{{ product.id }}" class="product-checkbox accent-erp-purple cursor-pointer">
                     </td>
                     <td class="px-4 py-2">
                         <div class="w-10 h-10 rounded-lg bg-slate-100 overflow-hidden border border-slate-200">
-                            {% if product.image %}
-                            <img src="{{ product.image.url }}" class="w-full h-full object-cover">
-                            {% else %}
-                            <div class="w-full h-full flex items-center justify-center text-slate-300">
-                                <i class="bi bi-box"></i>
-                            </div>
-                            {% endif %}
+                            {% if product.image %}<img src="{{ product.image.url }}" class="w-full h-full object-cover">{% else %}<div class="w-full h-full flex items-center justify-center text-slate-300"><i class="bi bi-box"></i></div>{% endif %}
                         </div>
                     </td>
-                    <td class="px-4 py-2 font-medium text-slate-700 hover:text-erp-purple cursor-pointer">
-                        <a href="{% url 'product_edit' product.id %}">{{ product.name }}</a>
+                    <td class="px-4 py-2 font-medium text-slate-700 hover:text-erp-purple">
+                        <a href="{% url 'product_edit' product.id %}?view=list">{{ product.name }}</a>
                     </td>
-                    <td class="px-4 py-2 text-slate-500 font-mono text-[12px]">
-                        {{ product.code }}
-                    </td>
-                    <td class="px-4 py-2 text-right text-slate-900 font-bold">
-                        {{ product.price|floatformat:2 }} ฿
-                    </td>
-                    <td class="px-4 py-2 text-right font-black {% if product.stock_qty <= 0 %}text-red-500{% else %}text-emerald-600{% endif %}">
-                        {{ product.stock_qty|floatformat:2 }}
-                    </td>
-                    <td class="px-4 py-2 text-slate-400">
-                        ใบ
-                    </td>
+                    <td class="px-4 py-2 text-slate-500 font-mono text-[12px]">{{ product.code }}</td>
+                    <td class="px-4 py-2 text-right text-slate-900 font-bold">{{ product.price|floatformat:2 }} ฿</td>
+                    <td class="px-4 py-2 text-right font-black {% if product.stock_qty <= 0 %}text-red-500{% else %}text-emerald-600{% endif %}">{{ product.stock_qty|floatformat:2 }}</td>
                 </tr>
                 {% empty %}
-                <tr>
-                    <td colspan="7" class="px-4 py-20 text-center text-slate-400 italic bg-slate-50/30">
-                        <i class="bi bi-inbox text-5xl block mb-4 opacity-20"></i>
-                        No products found matching your search.
-                    </td>
-                </tr>
+                <tr><td colspan="6" class="px-4 py-20 text-center text-slate-400 italic bg-slate-50/30">No products found.</td></tr>
                 {% endfor %}
                 </tbody>
             </table>
@@ -165,79 +139,39 @@
     </form>
 </div>
 
-<div id="delete-modal" class="fixed inset-0 z-[100] hidden overflow-y-auto">
-    <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity"></div>
-
+<div id="delete-modal" class="fixed inset-0 z-[100] hidden">
+    <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm" onclick="closeDeleteModal()"></div>
     <div class="flex min-h-full items-center justify-center p-4">
-        <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg animate-in zoom-in duration-200">
-            <div class="bg-white px-6 pb-6 pt-8 text-center">
-                <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-50 text-red-600">
-                    <i class="bi bi-exclamation-triangle text-3xl"></i>
-                </div>
-                <h3 class="text-xl font-bold text-slate-900">ยืนยันการลบสินค้า</h3>
-                <p class="mt-2 text-sm text-slate-500">
-                    คุณแน่ใจหรือไม่ว่าต้องการลบรายการที่เลือก? การดำเนินการนี้ไม่สามารถย้อนคืนได้
-                </p>
-            </div>
-            <div class="bg-slate-50 px-6 py-4 flex flex-row-reverse gap-3">
-                <button type="button" onclick="confirmDelete()"
-                        class="inline-flex w-full justify-center rounded-lg bg-red-600 px-6 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-red-500 transition-all sm:w-auto">
-                    ลบรายการ
-                </button>
-                <button type="button" onclick="closeDeleteModal()"
-                        class="inline-flex w-full justify-center rounded-lg bg-white px-6 py-2.5 text-sm font-bold text-slate-700 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50 transition-all sm:w-auto">
-                    ยกเลิก
-                </button>
+        <div class="relative bg-white rounded-2xl shadow-2xl sm:max-w-lg w-full p-8 text-center animate-in zoom-in duration-200">
+            <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-50 text-red-600"><i class="bi bi-exclamation-triangle text-3xl"></i></div>
+            <h3 class="text-xl font-bold text-slate-900">ยืนยันการลบสินค้า</h3>
+            <p class="mt-2 text-sm text-slate-500">คุณแน่ใจหรือไม่ว่าต้องการลบรายการที่เลือก?</p>
+            <div class="mt-6 flex flex-row-reverse gap-3">
+                <button type="button" onclick="confirmDelete()" class="bg-red-600 text-white px-6 py-2.5 rounded-lg font-bold hover:bg-red-500 transition-all">ลบรายการ</button>
+                <button type="button" onclick="closeDeleteModal()" class="bg-white border border-slate-300 text-slate-700 px-6 py-2.5 rounded-lg font-bold hover:bg-slate-50 transition-all">ยกเลิก</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    // ระบบเลือก Checkbox ทั้งหมด
     const selectAll = document.getElementById('select-all');
     const checkboxes = document.getElementsByClassName('product-checkbox');
-
-    selectAll.addEventListener('change', function() {
-        for (let checkbox of checkboxes) {
-            checkbox.checked = selectAll.checked;
-        }
-    });
-
     const deleteModal = document.getElementById('delete-modal');
     const mainForm = document.getElementById('product-list-form');
 
+    selectAll.addEventListener('change', () => { for (let cb of checkboxes) cb.checked = selectAll.checked; });
+
     function openDeleteModal() {
-        // ตรวจสอบก่อนว่ามีการเลือก checkbox หรือไม่
-        const checkedCount = document.querySelectorAll('.product-checkbox:checked').length;
-        if (checkedCount > 0) {
-            deleteModal.classList.remove('hidden');
-        } else {
-            alert('กรุณาเลือกสินค้าที่ต้องการลบอย่างน้อย 1 รายการ');
-        }
+        if (document.querySelectorAll('.product-checkbox:checked').length > 0) deleteModal.classList.remove('hidden');
+        else alert('กรุณาเลือกสินค้าอย่างน้อย 1 รายการ');
     }
-
-    function closeDeleteModal() {
-        deleteModal.classList.add('hidden');
-    }
-
+    function closeDeleteModal() { deleteModal.classList.add('hidden'); }
     function confirmDelete() {
-        // สร้าง hidden input เพื่อส่งค่า action="delete"
         const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'action';
-        input.value = 'delete';
+        input.type = 'hidden'; input.name = 'action'; input.value = 'delete';
         mainForm.appendChild(input);
-
-        // ส่งฟอร์มจริง
         mainForm.submit();
-    }
-
-    // ปิด Modal เมื่อคลิกด้านนอก
-    window.onclick = function(event) {
-        if (event.target == deleteModal) {
-            closeDeleteModal();
-        }
     }
 </script>
 {% endblock %}
